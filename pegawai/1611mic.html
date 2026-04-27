@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Admin Panel</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+*{
+box-sizing:border-box;
+}
+
+body{
+margin:0;
+font-family:Arial, sans-serif;
+background:linear-gradient(135deg,#052e16,#14532d,#022c22);
+color:#fff;
+min-height:100vh;
+}
+
+.header{
+background:rgba(0,0,0,.35);
+backdrop-filter:blur(10px);
+padding:20px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+box-shadow:0 4px 20px rgba(0,0,0,.3);
+position:sticky;
+top:0;
+z-index:10;
+}
+
+.header h1{
+margin:0;
+font-size:26px;
+color:#facc15;
+}
+
+.logout{
+background:#dc2626;
+color:white;
+border:none;
+padding:10px 18px;
+border-radius:10px;
+cursor:pointer;
+font-weight:bold;
+}
+
+.logout:hover{
+background:#b91c1c;
+}
+
+.container{
+padding:25px;
+max-width:1200px;
+margin:auto;
+}
+
+.title-box{
+background:rgba(255,255,255,.08);
+border:1px solid rgba(255,255,255,.15);
+border-radius:18px;
+padding:20px;
+margin-bottom:25px;
+box-shadow:0 10px 30px rgba(0,0,0,.25);
+}
+
+.title-box h2{
+margin:0;
+color:#86efac;
+}
+
+#list{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+gap:20px;
+}
+
+.card{
+background:rgba(255,255,255,.1);
+border:1px solid rgba(255,255,255,.18);
+border-radius:20px;
+padding:18px;
+box-shadow:0 10px 30px rgba(0,0,0,.35);
+backdrop-filter:blur(12px);
+transition:.2s;
+}
+
+.card:hover{
+transform:translateY(-4px);
+box-shadow:0 15px 35px rgba(0,0,0,.45);
+}
+
+.row{
+margin:8px 0;
+font-size:15px;
+}
+
+.label{
+color:#bbf7d0;
+font-weight:bold;
+}
+
+.amount{
+font-size:24px;
+font-weight:bold;
+color:#facc15;
+margin:12px 0;
+}
+
+.badge{
+display:inline-block;
+padding:6px 12px;
+border-radius:999px;
+font-size:13px;
+font-weight:bold;
+margin-top:5px;
+}
+
+.pending{
+background:#facc15;
+color:#422006;
+}
+
+.approved{
+background:#22c55e;
+color:#052e16;
+}
+
+.rejected{
+background:#ef4444;
+color:white;
+}
+
+.withdraw-box{
+background:rgba(0,0,0,.22);
+padding:12px;
+border-radius:14px;
+margin-top:14px;
+border:1px solid rgba(255,255,255,.12);
+}
+
+.withdraw-box b{
+color:#facc15;
+}
+
+.proof{
+margin-top:14px;
+}
+
+.proof img{
+width:100%;
+max-height:220px;
+object-fit:cover;
+border-radius:14px;
+border:2px solid #22c55e;
+margin-top:8px;
+}
+
+.btn-area{
+display:flex;
+gap:10px;
+margin-top:18px;
+}
+
+button{
+border:none;
+border-radius:12px;
+padding:10px 12px;
+cursor:pointer;
+font-weight:bold;
+}
+
+.approve-btn{
+background:#22c55e;
+color:#052e16;
+flex:1;
+}
+
+.approve-btn:hover{
+background:#16a34a;
+color:white;
+}
+
+.reject-btn{
+background:#ef4444;
+color:white;
+flex:1;
+}
+
+.reject-btn:hover{
+background:#b91c1c;
+}
+
+.empty{
+text-align:center;
+padding:40px;
+background:rgba(255,255,255,.1);
+border-radius:20px;
+color:#bbf7d0;
+grid-column:1/-1;
+}
+
+@media(max-width:600px){
+.header{
+flex-direction:column;
+gap:12px;
+text-align:center;
+}
+
+.container{
+padding:15px;
+}
+
+.btn-area{
+flex-direction:column;
+}
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+<h1>💰 Admin Panel</h1>
+<button class="logout" onclick="logout()">Logout</button>
+</div>
+
+<div class="container">
+
+<div class="title-box">
+<h2>Daftar Transaksi</h2>
+<p>Kelola deposit dan withdraw user di sini.</p>
+</div>
+
+<div id="list"></div>
+
+</div>
+
+<script>
+function logout(){
+localStorage.clear()
+window.location="/login.html"
+}
+</script>
+
+<script>
+
+let lastData = ""
+
+async function load(){
+
+let res = await fetch("/transactions")
+let data = await res.json()
+
+let jsonNow = JSON.stringify(data)
+
+// 🔥 hanya update kalau ada perubahan
+if(jsonNow === lastData) return
+
+lastData = jsonNow
+
+let html = ""
+
+if(!data || data.length === 0){
+document.getElementById("list").innerHTML = `
+<div class="empty">
+Belum ada transaksi.
+</div>
+`
+return
+}
+
+// AUTO REFRESH tiap 3 detik
+setInterval(()=>{
+load()
+},3000)
+
+data.forEach(d=>{
+
+let statusClass = "pending"
+let statusText = "⏳ Pending"
+
+if(d.status === "approved"){
+statusClass = "approved"
+statusText = "✔ Sudah Di Approve"
+}
+
+if(d.status === "rejected"){
+statusClass = "rejected"
+statusText = "❌ Ditolak"
+}
+
+html += `
+
+<div class="card">
+
+<div class="row">
+<span class="label">User:</span> ${d.username}
+</div>
+
+<div class="row">
+<span class="label">Type:</span> ${d.type}
+</div>
+
+<div class="amount">
+Rp ${Number(d.amount).toLocaleString("id-ID")}
+</div>
+
+<div class="row">
+<span class="label">Status:</span><br>
+<span class="badge ${statusClass}">${statusText}</span>
+</div>
+
+`
+
+// ======================
+// WITHDRAW DATA
+// ======================
+
+if(d.type === "withdraw"){
+
+html += `
+
+<div class="withdraw-box">
+<b>🏦 Data Withdraw User</b><br><br>
+
+<div class="row">
+<span class="label">Email:</span> ${d.email || "-"}
+</div>
+
+<div class="row">
+<span class="label">No HP:</span> ${d.phone || "-"}
+</div>
+
+<div class="row">
+<span class="label">Bank:</span> ${d.bank || "-"}
+</div>
+
+<div class="row">
+<span class="label">Atas Nama:</span> ${d.atasnama || "-"}
+</div>
+
+<div class="row">
+<span class="label">Rekening:</span> ${d.rekening || "-"}
+</div>
+</div>
+
+`
+
+}
+
+// ======================
+// DEPOSIT BUKTI
+// ======================
+
+if(d.type === "deposit" && d.proof){
+
+html += `
+
+<div class="proof">
+<span class="label">📷 Bukti Transfer:</span><br>
+
+<a href="/uploads/${d.proof}" target="_blank">
+<img src="/uploads/${d.proof}">
+</a>
+</div>
+
+`
+
+}
+
+// ======================
+// BUTTON
+// ======================
+
+if(d.status === "pending"){
+
+if(d.type === "deposit"){
+
+html += `
+
+<div class="btn-area">
+<button class="approve-btn" onclick="approveDeposit(${d.id})">
+Approve Deposit
+</button>
+
+<button class="reject-btn" onclick="rejectDeposit(${d.id})">
+Tolak Deposit
+</button>
+</div>
+
+`
+
+}else{
+
+html += `
+
+<div class="btn-area">
+<button class="approve-btn" onclick="approveWithdraw(${d.id})">
+Approve Withdraw
+</button>
+
+<button class="reject-btn" onclick="rejectWithdraw(${d.id})">
+Tolak Withdraw
+</button>
+</div>
+
+`
+
+}
+
+}
+
+html += `</div>`
+
+})
+
+document.getElementById("list").innerHTML = html
+
+}
+
+load()
+
+
+/* =========================
+   Approve
+========================= */
+
+async function approveDeposit(id){
+
+await fetch("/approveDeposit",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({id})
+})
+
+load()
+
+}
+
+async function approveWithdraw(id){
+
+await fetch("/approveWithdraw",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({id})
+})
+
+load()
+
+}
+
+
+/* =========================
+   Reject
+========================= */
+
+async function rejectDeposit(id){
+
+await fetch("/rejectDeposit",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({id})
+})
+
+load()
+
+}
+
+async function rejectWithdraw(id){
+
+await fetch("/rejectWithdraw",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({id})
+})
+
+load()
+
+}
+
+</script>
+
+</body>
+</html>

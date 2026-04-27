@@ -1,0 +1,19 @@
+{
+ "users":[
+  {
+   "id":"1",
+   "username":"admin",
+   "password":"admin123",
+   "role":"admin",
+   "balance":0
+  },
+  {
+   "id":"2",
+   "username":"player",
+   "password":"123",
+   "role":"member",
+   "balance":10000
+  }
+ ],
+ "transactions":[]
+}

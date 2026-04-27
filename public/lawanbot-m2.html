@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Dashboard Wallet</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+<style>
+body{
+margin:0;
+font-family:Arial;
+background:#f4f4f4;
+padding:15px;
+}
+
+/* HEADER */
+.topbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+flex-wrap:wrap;
+gap:10px;
+}
+
+.menu{
+display:flex;
+flex-wrap:wrap;
+gap:10px;
+}
+
+.menu button{
+margin:0;
+}
+
+/* BOX */
+.box{
+background:white;
+padding:20px;
+margin-top:20px;
+border-radius:10px;
+max-width:900px;
+margin-left:auto;
+margin-right:auto;
+}
+
+/* BUTTON */
+button{
+padding:10px 15px;
+cursor:pointer;
+border:none;
+background:#3498db;
+color:white;
+border-radius:5px;
+}
+
+button:hover{
+background:#2980b9;
+}
+
+/* INPUT */
+input{
+width:100%;
+padding:10px;
+border-radius:5px;
+border:1px solid #ccc;
+}
+
+/* TABLE */
+table{
+width:100%;
+border-collapse:collapse;
+}
+
+td,th{
+border:1px solid #ddd;
+padding:8px;
+text-align:center;
+}
+
+/* HIDE */
+.hidden{
+display:none;
+}
+
+#depositLoading{
+text-align:center;
+padding:20px;
+}
+
+/* animasi cari lawan */
+.loader{
+border:5px solid #eee;
+border-top:5px solid #3498db;
+border-radius:50%;
+width:40px;
+height:40px;
+animation:spinLoader 1s linear infinite;
+margin:auto;
+}
+
+@keyframes spinLoader{
+0%{transform:rotate(0)}
+100%{transform:rotate(360deg)}
+}
+
+/* popup result */
+#resultPopup.hidden{
+display:none !important;
+}
+
+
+
+/* =========================
+   RESPONSIVE HP
+========================= */
+@media (max-width:600px){
+
+.topbar{
+flex-direction:row;
+justify-content:space-between;
+align-items:center;
+}
+
+.menu{
+margin-left:auto; /* dorong ke kanan */
+justify-content:flex-end;
+}
+
+}
+
+
+
+/* FLOAT LOGOUT BUTTON */
+#logoutFloat{
+position:fixed;
+bottom:20px;
+right:20px;
+background:#e74c3c;
+padding:12px 18px;
+border-radius:50px;
+color:white;
+font-weight:bold;
+box-shadow:0 4px 10px rgba(0,0,0,0.2);
+z-index:9999;
+}
+
+#logoutFloat:hover{
+background:#c0392b;
+}
+
+
+#logoutFloat.hidden{
+display:none;
+}
+
+
+#confirmJoinPopup{
+display:flex;
+}
+
+#confirmJoinPopup.hidden{
+display:none;
+}
+
+
+
+.payment-method{
+display:flex;
+gap:15px;
+justify-content:center;
+}
+
+.payBox{
+width:120px;
+padding:15px;
+border-radius:15px;
+background:#111;
+color:white;
+text-align:center;
+cursor:pointer;
+transition:.3s;
+border:2px solid transparent;
+}
+
+.payBox:hover{
+transform:scale(1.05);
+border:2px solid #00aaff;
+}
+
+.payBox img{
+width:60px;
+}
+
+.confirmBtn{
+padding:10px 20px;
+border:none;
+border-radius:10px;
+background:#00aaff;
+color:white;
+font-weight:bold;
+cursor:pointer;
+}
+
+#paymentInfo{
+text-align:center;
+padding:20px;
+}
+
+.qrisImg{
+width:250px;
+border-radius:15px;
+}
+
+/* animasi dadu */
+
+
+
+
+#diceArea{
+display:grid;
+grid-template-columns:repeat(3,80px);
+gap:20px;
+justify-content:center;
+margin-top:20px;
+perspective:800px;
+}
+
+.dice{
+width:60px;
+height:60px;
+position:relative;
+transform-style:preserve-3d;
+transition:transform 1s;
+}
+
+.dice.spin{
+animation:spinDice 1s ease;
+}
+
+.dice.spin2{
+animation:spinDice2 2s ease;
+}
+
+.face{
+ box-shadow: inset -5px -5px 10px rgba(0,0,0,0.2);
+position:absolute;
+width:60px;
+height:60px;
+background:#2196f3;
+color:white;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:25px;
+backface-visibility:hidden;
+box-sizing: border-box;
+
+}
+
+
+.hide-number .face {
+  color: transparent;
+}
+
+
+
+.front{ transform:rotateY(0deg) translateZ(29.8px); }
+.back{ transform:rotateY(180deg) translateZ(29.8px); }
+.right{ transform:rotateY(90deg) translateZ(29.8px); }
+.left{ transform:rotateY(-90deg) translateZ(29.8px); }
+.top{ transform:rotateX(90deg) translateZ(29.8px); }
+.bottom{ transform:rotateX(-90deg) translateZ(29.8px); }
+
+@keyframes spinDice{
+0%{transform:rotateX(0) rotateY(0)}
+100%{transform:rotateX(720deg) rotateY(720deg)}
+}
+
+@keyframes spinDice2{
+0%{transform:rotateX(0) rotateY(0)}
+100%{transform:rotateX(1080deg) rotateY(1080deg)}
+}
+
+</style>
+
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="topbar">
+<div>
+<h2>Dashboard</h2>
+<h3>Selamat Datang, <span id="namaUser"></span></h3>
+</div>
+
+<div class="menu">
+<button onclick="window.location.href='dashboard.html'">Home</button>
+</div>
+</div>
+
+
+ <div id="Lawan-bot" class="box">
+
+<h3>Lawan Bot</h3>
+
+<br>
+
+<input type="number" id="betAmount" placeholder="Jumlah taruhan">
+
+<br><br>
+
+<button id="btnKecil" onclick="pilih('kecil')">Kecil</button>
+<button id="btnBesar" onclick="pilih('besar')">Besar</button>
+
+<br><br>
+
+<div>
+Pilihan Anda : <b id="pilihanUser">Belum memilih</b>
+</div>
+
+<br>
+
+<button onclick="cariLawan()">Mulai Game</button>
+
+</div>
+
+<div id="saldoErrorGlobal" class="hidden" style="
+position:fixed;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+background:#1e293b;
+padding:20px 40px;
+border-radius:10px;
+color:red;
+font-weight:bold;
+z-index:9999;
+">
+Saldo anda kurang
+</div>
+
+
+
+
+
+<!-- ANIMASI HITUNG MUNDUR   -->
+<div id="cariLawanBox" class="hidden">
+
+<button type="button" onclick="cancelCari()">Cancel</button>
+
+</div>
+
+
+
+<!-- GAME PAGE -->
+<div id="gamePage" class="box hidden">
+<div style="display:flex;justify-content:space-between;">
+<h3>Game Dadu</h3>
+<div id="infoGame" style="margin-bottom:15px;">
+<b>Anda:</b> <span id="infoUser"></span><br>
+<b>Lawan:</b> <span id="infoLawan">Bot</span><br>
+<b>Taruhan:</b> Rp <span id="infoBet">0</span>
+</div>
+</div>
+
+<br>
+
+<div id="diceArea" style="display:grid;grid-template-columns:repeat(3,80px);gap:10px;">
+</div>
+
+<div id="resultPopup" class="hidden" style="
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.7);
+display:flex;
+justify-content:center;
+align-items:center;
+z-index:999;
+">
+
+<div style="
+background:white;
+padding:30px;
+border-radius:10px;
+text-align:center;
+width:300px;
+">
+
+<h1 id="resultText"></h1>
+
+<br>
+
+<button onclick="window.location.href='lawanbot.html'">Main Lagi</button>
+<button onclick="window.location.href='dashboard.html'">Exit</button>
+
+</div>
+
+</div>
+
+<h3>Riwayat Hasil</h3>
+
+<ul id="historyDice"></ul>
+</div>
+</div>
+
+
+
+
+<script>
+let nextPageAfterReload = null
+let diceIntervals = []
+
+
+
+
+const MIN_DEPOSIT = 10000
+const MIN_WITHDRAW = 10000
+
+/* =========================
+   SWITCH HALAMAN
+========================= */
+function showPage(page){
+
+const pages = [
+"homePage",
+"depositPage",
+"withdrawPage",
+"historyPage",
+"Lawan-bot",
+"gamePage"
+]
+
+
+if(page === "withdrawPage"){
+checkWithdrawRealtime()
+}
+
+
+if(page === "depositPage"){
+checkDepositRealtime()
+}
+
+// =========================
+// MENU HEADER (punya kamu)
+if(page === "homePage"){
+document.querySelector(".menu").classList.remove("hidden")
+}else{
+document.querySelector(".menu").classList.add("hidden")
+}
+
+// =========================
+// LOGOUT BUTTON (TAMBAHAN 🔥)
+const logoutBtn = document.getElementById("logoutFloat")
+
+const mainPages = ["homePage","depositPage","withdrawPage","historyPage"]
+
+if(mainPages.includes(page)){
+document.querySelector(".menu").classList.remove("hidden")
+}else{
+document.querySelector(".menu").classList.add("hidden")
+}
+
+// =========================
+// SEMBUNYIKAN SEMUA PAGE
+pages.forEach(p=>{
+let el = document.getElementById(p)
+if(el) el.classList.add("hidden")
+})
+
+// =========================
+// TAMPILKAN PAGE YANG DIPILIH
+document.getElementById(page).classList.remove("hidden")
+
+}
+/* =========================
+   LOGOUT
+========================= */
+function logout(){
+localStorage.clear()
+window.location="login.html"
+}
+
+/* =========================
+   FORMAT RUPIAH
+========================= */
+function formatRupiah(angka){
+return new Intl.NumberFormat('id-ID').format(angka)
+}
+
+/* =========================
+   USER
+========================= */
+const username = localStorage.getItem("user")
+document.getElementById("namaUser").innerText = username
+
+if(!username){
+alert("Silahkan login dulu")
+window.location="login.html"
+}
+
+
+
+/* =================
+   SALDO
+================= */
+let saldoUser = 0
+
+function loadSaldo(){
+
+fetch("/saldo/"+username)
+.then(res=>res.json())
+.then(data=>{
+
+saldoUser = data.saldo // 🔥 simpan saldo
+
+document.getElementById("saldo").innerText =
+"Rp " + formatRupiah(data.saldo)
+
+})
+
+}
+
+
+
+/* =================
+SISTEM GAME FIX FULL
+================= */
+
+let pilihan = null
+let taruhan = 0
+let room = null
+let roomCode = null  
+let gameMode = null
+let intervalMatch = null
+
+
+/* =================
+PILIH RANDOM ONLINE
+================= */
+function pilih(p){
+pilihan = p
+
+document.getElementById("pilihanUser").innerText = p
+document.getElementById("infoUser").innerText = username + " ("+p+")"
+
+if(p === "kecil"){
+btnKecil.style.background="green"
+btnBesar.style.background="gray"
+}else{
+btnBesar.style.background="green"
+btnKecil.style.background="gray"
+}
+}
+/* =================
+   LAWAN BOT
+================= */
+
+function cariLawan(){
+
+let bet = parseInt(document.getElementById("betAmount").value)
+
+if(!bet) return alert("Masukkan taruhan!")
+if(!pilihan) return alert("Pilih dulu!")
+
+// cek saldo
+if(bet > saldoUser){
+document.getElementById("saldoErrorGlobal").style.display = "block"
+
+setTimeout(()=>{
+document.getElementById("saldoErrorGlobal").style.display = "none"
+},2000)
+
+return
+}
+
+taruhan = bet
+
+document.getElementById("infoBet").innerText =
+new Intl.NumberFormat('id-ID').format(taruhan)
+
+// tampilkan game page
+showPage("gamePage")
+buatDadu()
+localStorage.setItem("botGameAktif","true")
+localStorage.setItem("botBet", taruhan)
+localStorage.setItem("botPick", pilihan)
+
+// countdown sebelum roll
+let time = 3
+
+let timer = setInterval(()=>{
+
+document.getElementById("historyDice").innerHTML =
+"<h2>Bot sedang bersiap... " + time + "</h2>"
+
+time--
+
+if(time < 0){
+clearInterval(timer)
+rollBotGameM2()
+}
+
+},1000)
+
+}
+
+
+
+
+/* =================
+roll bot m2?
+================= */
+function rollBotGameM2(){
+
+fetch("/lawan-bot-m2",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+username: username,
+bet: taruhan,
+pick: pilihan
+})
+})
+.then(res=>res.json())
+.then(data=>{
+
+if(data.status === "saldo_kurang"){
+alert("Saldo anda kurang")
+showPage("Lawan-bot")
+return
+}
+
+if(data.status !== "success"){
+alert("Terjadi kesalahan")
+showPage("Lawan-bot")
+return
+}
+
+let rounds = data.rounds
+let index = 0
+
+function mainkanRonde(){
+
+let ronde = rounds[index]
+let dice = document.querySelectorAll(".dice")
+let hasilServer = ronde.hasil
+
+dice.forEach((d,i)=>{
+
+setTimeout(()=>{
+
+d.classList.remove("hide-number")
+
+let angka = hasilServer[i]
+d.dataset.value = angka
+d.style.transform = getRotate(angka)
+
+updateTotal()
+
+}, i * 300)
+
+})
+
+setTimeout(()=>{
+
+document.getElementById("historyDice").innerHTML = `
+<h2>M${ronde.roundNo}</h2>
+<h2>Total: ${ronde.total}</h2>
+<h3>Hasil: ${ronde.hasilGame}</h3>
+`
+
+index++
+
+if(index < rounds.length){
+
+setTimeout(()=>{
+document.getElementById("historyDice").innerHTML += `
+<h3>M${rounds[index].roundNo} mulai...</h3>
+`
+mainkanRonde()
+},2000)
+
+}else{
+
+setTimeout(()=>{
+
+document.getElementById("resultPopup").classList.remove("hidden")
+
+document.getElementById("resultText").innerText =
+data.result === "menang" ? "🎉 MENANG" : "💀 KALAH"
+
+loadSaldo()
+
+},1500)
+
+}
+
+},4500)
+
+}
+
+mainkanRonde()
+
+})
+
+}
+/* =================
+COUNTDOWN MATCH
+================= */
+function startCountdown(players){
+
+document.getElementById("cariLawanBox").innerHTML = `
+<h3>Match ditemukan!</h3>
+<h2 id="countdown">3</h2>
+`
+
+let count = 3
+
+let cd = setInterval(()=>{
+
+count--
+document.getElementById("countdown").innerText = count
+
+if(count <= 0){
+
+clearInterval(cd)
+
+showPage("gamePage")
+buatDadu()
+startGame(players)
+
+}
+
+},1000)
+
+}
+
+
+/* =================
+BUAT DADU 3D
+================= */
+function buatDadu(){
+
+document.getElementById("cariLawanBox").classList.add("hidden")
+
+
+let area = document.getElementById("diceArea")
+area.innerHTML=""
+
+for(let i=0;i<9;i++){
+
+let dice = document.createElement("div")
+dice.className="dice"
+
+dice.innerHTML=`
+<div class="face front"></div>
+<div class="face back"></div>
+<div class="face right"></div>
+<div class="face left"></div>
+<div class="face top"></div>
+<div class="face bottom"></div>
+`
+
+area.appendChild(dice)
+setDiceReal(dice)         
+dice.classList.add("hide-number")
+setDiceReal(dice)
+
+}
+
+}
+
+
+/* =================
+FUNGSI ROTASI DADU
+================= */
+function getRotate(angka){
+
+switch(angka){
+
+case 1: return "rotateX(0deg) rotateY(0deg)"       // front
+case 6: return "rotateY(180deg)"                  // back
+
+case 3: return "rotateY(-90deg)"                  // right
+case 4: return "rotateY(90deg)"                   // left
+
+case 5: return "rotateX(-90deg)"                  // top
+case 2: return "rotateX(90deg)"                   // bottom
+
+}
+
+}
+
+
+/* =================
+UPDATE TOTAL REALTIME
+================= */
+function updateTotal(){
+
+let total = 0
+
+document.querySelectorAll(".dice").forEach(d=>{
+  let val = parseInt(d.dataset.value)
+  if(!isNaN(val)) total += val
+})
+
+document.getElementById("historyDice").innerHTML =
+"<h2>Total: "+total+"</h2>"
+
+}
+
+
+/* =================
+ROLL DADU 3D REALTIME (SYNC SERVER)
+================= */
+function rollDiceOnline(){
+
+fetch("/roll",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({room})
+})
+.then(res=>res.json())
+.then(data=>{
+
+if(data.status !== "roll") return
+
+let hasilServer = data.hasil
+
+let dice = document.querySelectorAll(".dice")
+
+dice.forEach((d,i)=>{
+
+setTimeout(()=>{
+
+   d.classList.remove("hide-number")
+let durasi = i >= 6 ? 2000 : 1000
+
+// animasi random visual
+let animRandom = setInterval(()=>{
+
+let angkaRandom = Math.floor(Math.random()*6)+1
+setDiceNumber(d, angkaRandom)
+
+updateTotal()
+
+},100)
+
+diceIntervals.push(animRandom)
+
+// rotasi random
+d.style.transition = durasi+"ms"
+d.style.transform =
+"rotateX("+(Math.random()*720)+"deg) rotateY("+(Math.random()*720)+"deg)"
+
+
+setTimeout(()=>{
+
+clearInterval(animRandom)
+
+// angka FINAL dari SERVER
+let angka = hasilServer[i]
+
+d.dataset.value = angka
+d.style.transform = getRotate(angka)
+
+updateTotal()
+
+},durasi)
+
+
+// dadu terakhir
+if(i == 8){
+
+setTimeout(()=>{
+
+cekHasilRealtime()
+
+},9000)
+
+}
+
+}, i * 1000)
+
+})
+
+})
+
+}
+
+/* =================
+SET ANGKA KE SEMUA SISI
+================= */
+function setDiceReal(dice){
+
+  dice.querySelector(".front").innerText = 1
+  dice.querySelector(".back").innerText = 6
+
+  dice.querySelector(".right").innerText = 3
+  dice.querySelector(".left").innerText = 4
+
+  dice.querySelector(".top").innerText = 5
+  dice.querySelector(".bottom").innerText = 2
+
+}
+
+/* =================
+CEK HASIL REALTIME
+================= */
+function cekHasilRealtime(){
+
+let getHasil = setInterval(()=>{
+
+fetch("/hasil",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({room})
+})
+.then(res=>res.json())
+.then(data=>{
+
+if(data.status === "done"){
+
+clearInterval(getHasil)
+
+// STOP SEMUA ANIMASI
+diceIntervals.forEach(x=>clearInterval(x))
+diceIntervals = []
+
+let dice = document.querySelectorAll(".dice")
+
+data.hasil.forEach((angka,i)=>{
+
+dice[i].dataset.value = angka
+dice[i].style.transform = getRotate(angka)
+
+})
+
+
+document.getElementById("historyDice").innerHTML =
+"<h2>Total: "+data.total+"</h2>"
+
+let isWin = data.winner === username
+
+document.getElementById("resultPopup").classList.remove("hidden")
+document.getElementById("resultText").innerText =
+isWin ? "🎉 MENANG" : "💀 KALAH"
+
+loadSaldo()
+
+
+// 🔥 TAMBAH INI
+localStorage.removeItem("botGameAktif")
+localStorage.removeItem("botBet")
+localStorage.removeItem("botPick")
+
+}
+
+})
+
+},500)
+
+}
+
+
+/* =================
+START GAME (FIX UNIVERSAL)
+================= */
+function startGame(data){
+
+let me, lawan
+
+if(Array.isArray(data)){
+me = data.find(p => p.username === username)
+lawan = data.find(p => p.username !== username)
+}else{
+me = data.me
+lawan = data.lawan
+}
+
+document.getElementById("infoGame").innerHTML = `
+Anda: ${me.username} (${me.pick})<br>
+Lawan: ${lawan.username} (${lawan.pick})<br>
+Taruhan: Rp ${me.bet}
+`
+
+window.dataGame = { me, lawan }
+
+// countdown dadu
+let time = 5
+
+let timer = setInterval(()=>{
+
+document.getElementById("historyDice").innerHTML =
+"<h2>Mulai dalam: "+time+"</h2>"
+
+time--
+
+if(time < 0){
+clearInterval(timer)
+rollDiceOnline()
+}
+
+},1000)
+
+}
+
+
+
+
+/* =================
+   main lagi
+================= */
+function mainLagi(){
+
+nextPageAfterReload = "lawan-bot"
+
+localStorage.setItem("goPage", nextPageAfterReload)
+
+location.reload()
+
+}
+
+/* =================
+   EXIT
+================= */
+
+function exitGame(){
+
+nextPageAfterReload = "homePage"
+
+// simpan ke localStorage biar kebaca setelah reload
+localStorage.setItem("goPage", nextPageAfterReload)
+
+// refresh
+location.reload()
+
+}
+
+/* =================
+   onload
+================= */
+
+window.onload = function(){
+
+const goPage = localStorage.getItem("goPage")
+
+if(goPage){
+showPage(goPage)
+
+// hapus biar gak looping
+localStorage.removeItem("goPage")
+}
+
+}
+/* =================
+   LOAD DATA
+================= */
+loadSaldo()
+loadHistory()
+
+</script>
+
+</body>
+</html>

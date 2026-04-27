@@ -1,0 +1,2029 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Dashboard Wallet</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+<style>
+body{
+margin:0;
+font-family:Arial;
+background:#f4f4f4;
+padding:15px;
+}
+
+/* HEADER */
+.topbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+flex-wrap:wrap;
+gap:10px;
+}
+
+.menu{
+display:flex;
+flex-wrap:wrap;
+gap:10px;
+}
+
+.menu button{
+margin:0;
+}
+
+/* BOX */
+.box{
+background:white;
+padding:20px;
+margin-top:20px;
+border-radius:10px;
+max-width:900px;
+margin-left:auto;
+margin-right:auto;
+}
+
+/* BUTTON */
+button{
+padding:10px 15px;
+cursor:pointer;
+border:none;
+background:#3498db;
+color:white;
+border-radius:5px;
+}
+
+button:hover{
+background:#2980b9;
+}
+
+/* INPUT */
+input{
+width:100%;
+padding:10px;
+border-radius:5px;
+border:1px solid #ccc;
+}
+
+/* TABLE */
+.tableWrap{
+width:100%;
+overflow-x:auto;
+}
+
+table{
+width:100%;
+min-width:600px;
+border-collapse:collapse;
+}
+
+td,th{
+border:1px solid #ddd;
+padding:8px;
+text-align:center;
+white-space:nowrap;
+}
+
+@media (max-width:600px){
+.box{
+padding:15px;
+}
+
+.tableWrap{
+overflow-x:auto;
+}
+
+table{
+font-size:12px;
+min-width:650px;
+}
+}
+
+/* HIDE */
+.hidden{
+display:none;
+}
+
+#depositLoading{
+text-align:center;
+padding:20px;
+}
+
+/* animasi cari lawan */
+.loader{
+border:5px solid #eee;
+border-top:5px solid #3498db;
+border-radius:50%;
+width:40px;
+height:40px;
+animation:spinLoader 1s linear infinite;
+margin:auto;
+}
+
+@keyframes spinLoader{
+0%{transform:rotate(0)}
+100%{transform:rotate(360deg)}
+}
+
+/* popup result */
+#resultPopup.hidden{
+display:none !important;
+}
+
+
+
+/* =========================
+   RESPONSIVE HP
+========================= */
+@media (max-width:600px){
+
+.topbar{
+flex-direction:row;
+justify-content:space-between;
+align-items:center;
+}
+
+.menu{
+margin-left:auto; /* dorong ke kanan */
+justify-content:flex-end;
+}
+
+}
+
+
+
+/* FLOAT LOGOUT BUTTON */
+#logoutFloat{
+position:fixed;
+bottom:20px;
+right:20px;
+background:#e74c3c;
+padding:12px 18px;
+border-radius:50px;
+color:white;
+font-weight:bold;
+box-shadow:0 4px 10px rgba(0,0,0,0.2);
+z-index:9999;
+}
+
+#logoutFloat:hover{
+background:#c0392b;
+}
+
+
+#logoutFloat.hidden{
+display:none;
+}
+
+
+#confirmJoinPopup{
+display:flex;
+}
+
+#confirmJoinPopup.hidden{
+display:none;
+}
+
+
+
+.payment-method{
+display:flex;
+gap:15px;
+justify-content:center;
+}
+
+.payBox{
+width:120px;
+padding:15px;
+border-radius:15px;
+background:#111;
+color:white;
+text-align:center;
+cursor:pointer;
+transition:.3s;
+border:2px solid transparent;
+}
+
+.payBox:hover{
+transform:scale(1.05);
+border:2px solid #00aaff;
+}
+
+.payBox img{
+width:60px;
+}
+
+.confirmBtn{
+padding:10px 20px;
+border:none;
+border-radius:10px;
+background:#00aaff;
+color:white;
+font-weight:bold;
+cursor:pointer;
+}
+
+#paymentInfo{
+text-align:center;
+padding:20px;
+}
+
+.qrisImg{
+width:250px;
+border-radius:15px;
+}
+
+/* animasi dadu */
+
+
+
+
+#diceArea{
+display:grid;
+grid-template-columns:repeat(3,80px);
+gap:20px;
+justify-content:center;
+margin-top:20px;
+perspective:800px;
+}
+
+.dice{
+width:60px;
+height:60px;
+position:relative;
+transform-style:preserve-3d;
+transition:transform 1s;
+}
+
+.dice.spin{
+animation:spinDice 1s ease;
+}
+
+.dice.spin2{
+animation:spinDice2 2s ease;
+}
+
+.face{
+ box-shadow: inset -5px -5px 10px rgba(0,0,0,0.2);
+position:absolute;
+width:60px;
+height:60px;
+background:#2196f3;
+color:white;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:25px;
+backface-visibility:hidden;
+box-sizing: border-box;
+
+}
+
+
+.hide-number .face {
+  color: transparent;
+}
+
+
+
+.front{ transform:rotateY(0deg) translateZ(29.8px); }
+.back{ transform:rotateY(180deg) translateZ(29.8px); }
+.right{ transform:rotateY(90deg) translateZ(29.8px); }
+.left{ transform:rotateY(-90deg) translateZ(29.8px); }
+.top{ transform:rotateX(90deg) translateZ(29.8px); }
+.bottom{ transform:rotateX(-90deg) translateZ(29.8px); }
+
+@keyframes spinDice{
+0%{transform:rotateX(0) rotateY(0)}
+100%{transform:rotateX(720deg) rotateY(720deg)}
+}
+
+@keyframes spinDice2{
+0%{transform:rotateX(0) rotateY(0)}
+100%{transform:rotateX(1080deg) rotateY(1080deg)}
+}
+
+</style>
+
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="topbar">
+<div>
+<h2>Dashboard</h2>
+<h3>Selamat Datang, <span id="namaUser"></span></h3>
+</div>
+
+<div class="menu">
+<button onclick="goRefresh('homePage')">Home</button>
+<button onclick="goRefresh('depositPage')">Deposit</button>
+<button onclick="goRefresh('withdrawPage')">Withdraw</button>
+<button onclick="goRefresh('historyPage')">Riwayat</button>
+</div>
+</div>
+
+<!-- HOME -->
+<div id="homePage" class="box">
+<h3>Saldo Anda</h3>
+<h1 id="saldo">Loading...</h1>
+<br>
+
+<button onclick="showPage('m1Page')" style="background:#3498db;width:200px;">M1 Only</button>
+
+<br><br>
+
+<button onclick="window.location.href='m2.html'" style="background:#3498db;width:200px;">M2</button>
+
+</div>
+<button id="logoutFloat" onclick="logout()">Logout</button>
+
+<!-- M1 PAGE -->
+<div id="m1Page" class="box hidden">
+
+<div style="display:flex;justify-content:space-between;">
+<h3>Match Mode</h3>
+<button onclick="showPage('homePage')">Home</button>
+</div>
+
+<br>
+
+<button onclick="showPage('randomPage')" style="width:100%">Random Online</button>
+
+<br><br>
+
+<button onclick="showPage('privatePage')" style="width:100%">
+Buat Room Private
+</button>
+
+<br><br>
+
+<button  value="m1" style="width:100%" onclick="window.location.href='lawanbot.html'">
+  Lawan Bot
+</button>
+
+
+</div> <!-- 🔥 TUTUP M1 PAGE -->
+
+
+<!-- RANDOM ONLINE -->
+<div id="randomPage" class="box hidden">
+
+<div style="display:flex;justify-content:space-between;">
+<h3>Random Online</h3>
+<button onclick="showPage('m1Page')">Home</button>
+</div>
+
+<br>
+
+<input type="number" id="betAmount" placeholder="Jumlah taruhan">
+
+<br><br>
+
+<button id="btnKecil" onclick="pilih('kecil')">Kecil</button>
+<button id="btnBesar" onclick="pilih('besar')">Besar</button>
+
+<br><br>
+
+<div>
+Pilihan Anda : <b id="pilihanUser">Belum memilih</b>
+</div>
+
+<br>
+
+<button onclick="cariLawan()">Cari Lawan</button>
+
+
+
+</div>
+
+</div>
+
+</div>
+
+
+
+<div id="saldoErrorGlobal" class="hidden" style="
+position:fixed;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+background:#1e293b;
+padding:20px 40px;
+border-radius:10px;
+color:red;
+font-weight:bold;
+z-index:9999;
+">
+Saldo anda kurang
+</div>
+
+
+<!-- PRIVATE ROOM -->
+<div id="privatePage" class="box hidden">
+
+<div style="display:flex;justify-content:space-between;">
+<h3>Private Room</h3>
+<button onclick="showPage('m1Page')">Home</button>
+</div>
+
+<br>
+
+<input type="number" id="betPrivate" placeholder="Jumlah taruhan">
+
+<br><br>
+
+<button id="btnKecilPrivate" onclick="pilihPrivate('kecil')">Kecil</button>
+<button id="btnBesarPrivate" onclick="pilihPrivate('besar')">Besar</button>
+
+<br><br>
+
+<div>
+Pilihan Anda : <b id="pilihanPrivate">Belum memilih</b>
+</div>
+<br>
+
+<button onclick="buatRoom()">Buat Room</button>
+
+
+
+
+<br><br>
+
+<hr>
+
+<h3>Join Room</h3>
+
+<input type="text" id="kodeRoom" placeholder="Masukkan kode room">
+
+<br><br>
+
+<button onclick="joinRoom()">Join Room</button>
+
+</div>
+
+
+<div id="confirmJoinPopup" class="hidden" style="
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.7);
+justify-content:center;
+align-items:center;
+z-index:9999;
+">
+
+<div style="
+background:white;
+padding:25px;
+border-radius:10px;
+text-align:center;
+width:300px;
+">
+
+<h3>Konfirmasi Join</h3>
+
+<p>Nama: <b id="cj_nama"></b></p>
+<p>Pick: <b id="cj_pick"></b></p>
+<p>Taruhan: Rp <b id="cj_bet"></b></p>
+
+<br>
+
+<button onclick="lanjutJoin()">Konfirmasi</button>
+<button onclick="batalJoin()" style="background:gray;">Batal</button>
+
+</div>
+</div>
+
+
+
+<!-- ANIMASI CARI LAWAN  -->
+<div id="cariLawanBox" class="hidden">
+
+<h3>Mencari Lawan...</h3>
+
+<div class="loader"></div>
+
+<button type="button" onclick="cancelCari()">Cancel</button>
+
+</div>
+
+
+
+<div id="readyBox" class="hidden">
+<h3>Lawan ditemukan</h3>
+<div id="namaLawanBox" class="hidden">
+Lawan : <b id="namaLawan"></b>
+</div>
+</div>
+
+<!-- GAME PAGE -->
+<div id="gamePage" class="box hidden">
+<div style="display:flex;justify-content:space-between;">
+<h3>Game Dadu</h3>
+<div id="infoGame" style="margin-bottom:15px;">
+<b>Anda:</b> <span id="infoUser"></span><br>
+<b>Lawan:</b> <span id="infoLawan">Menunggu...</span><br>
+<b>Taruhan:</b> Rp <span id="infoBet">0</span>
+</div>
+</div>
+
+<br>
+
+<div id="diceArea" style="display:grid;grid-template-columns:repeat(3,80px);gap:10px;">
+</div>
+
+<div id="resultPopup" class="hidden" style="
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.7);
+display:flex;
+justify-content:center;
+align-items:center;
+z-index:999;
+">
+
+<div style="
+background:white;
+padding:30px;
+border-radius:10px;
+text-align:center;
+width:300px;
+">
+
+<h1 id="resultText"></h1>
+
+<br>
+
+<button onclick="mainLagi()">Main Lagi</button>
+<button onclick="exitGame()">Exit</button>
+
+</div>
+
+</div>
+
+<h3>Riwayat Hasil</h3>
+
+<ul id="historyDice"></ul>
+</div>
+</div>
+
+
+<!-- DEPOSIT -->
+<div id="depositPage" class="box hidden">
+<h3>Deposit</h3>
+
+<!-- PILIH METODE -->
+<div class="payment-method">
+
+<div class="payBox" onclick="selectPay('qris')">
+<img src="img/qris.png">
+<p>QRIS</p>
+</div>
+
+<div class="payBox" onclick="selectPay('bca')">
+<img src="img/bca.png">
+<p>Transfer BCA</p>
+</div>
+
+<div class="payBox" onclick="selectPay('dana')">
+<img src="img/dana.png">
+<p>DANA</p>
+</div>
+
+</div>
+
+<br>
+
+<button onclick="confirmPay()" class="confirmBtn">Konfirmasi</button>
+
+
+<!-- HASIL METODE -->
+<div id="paymentInfo"></div>
+
+<br>
+
+<div id="depositForm" class="hidden">
+
+<input type="number" id="depositAmount" placeholder="Jumlah">
+<br><br>
+
+<input type="file" id="proof" required>
+<small style="color:red">(Bukti transfer wajib)</small>
+
+<br><br>
+
+<button id="btnDeposit" onclick="deposit()">Deposit</button>
+
+</div>
+
+
+<!-- LOADING -->
+<div id="depositLoading" class="hidden">
+<h3 style="color:orange;">⏳ Deposit anda sedang diproses...</h3>
+<p>Menunggu persetujuan admin</p>
+</div>
+
+</div>
+
+<!-- WITHDRAW -->
+<!-- WITHDRAW -->
+<div id="withdrawPage" class="box hidden">
+<h3>Withdraw</h3>
+
+<div id="withdrawForm">
+<input type="number" id="withdrawAmount" placeholder="Jumlah">
+<br><br>
+
+<button onclick="withdraw()">Withdraw</button>
+</div>
+
+<!-- LOADING -->
+<div id="withdrawLoading" class="hidden">
+<h3 style="color:orange;">⏳ Withdraw anda sedang diproses...</h3>
+<p>Menunggu persetujuan admin</p>
+</div>
+
+</div>
+
+<!-- HISTORY -->
+<div id="historyPage" class="box hidden">
+<h3>Riwayat Transaksi</h3>
+
+
+
+
+<div class="tableWrap">
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Tipe</th>
+<th>Jumlah</th>
+<th>Status</th>
+<th>Tanggal</th>
+</tr>
+</thead>
+
+<tbody id="history"></tbody>
+</table>
+</div>
+
+<script>
+let nextPageAfterReload = null
+let diceIntervals = []
+let currentRound = 1
+
+
+
+
+const MIN_DEPOSIT = 10000
+const MIN_WITHDRAW = 10000
+
+/* =========================
+   SWITCH HALAMAN
+========================= */
+function showPage(page){
+
+localStorage.setItem("lastPage", page)
+
+const pages = [
+"homePage",
+"depositPage",
+"withdrawPage",
+"historyPage",
+"m1Page",
+"privatePage",
+"randomPage",
+"gamePage"
+]
+
+
+if(page === "withdrawPage"){
+checkWithdrawRealtime()
+}
+
+
+if(page === "depositPage"){
+checkDepositRealtime()
+}
+
+// =========================
+// MENU HEADER (punya kamu)
+if(page === "homePage"){
+document.querySelector(".menu").classList.remove("hidden")
+}else{
+document.querySelector(".menu").classList.add("hidden")
+}
+
+// =========================
+// LOGOUT BUTTON (TAMBAHAN 🔥)
+const logoutBtn = document.getElementById("logoutFloat")
+if(page === "homePage" || page === "depositPage" || page === "withdrawPage" || page === "historyPage"){
+logoutBtn.classList.remove("hidden")
+}else{
+logoutBtn.classList.add("hidden")
+}
+
+const mainPages = ["homePage","depositPage","withdrawPage","historyPage"]
+
+if(mainPages.includes(page)){
+document.querySelector(".menu").classList.remove("hidden")
+}else{
+document.querySelector(".menu").classList.add("hidden")
+}
+
+// =========================
+// SEMBUNYIKAN SEMUA PAGE
+pages.forEach(p=>{
+let el = document.getElementById(p)
+if(el) el.classList.add("hidden")
+})
+
+// =========================
+// TAMPILKAN PAGE YANG DIPILIH
+document.getElementById(page).classList.remove("hidden")
+
+}
+/* =========================
+   LOGOUT
+========================= */
+function logout(){
+localStorage.clear()
+window.location="login.html"
+}
+
+/* =========================
+   FORMAT RUPIAH
+========================= */
+function formatRupiah(angka){
+return new Intl.NumberFormat('id-ID').format(angka)
+}
+
+/* =========================
+   USER
+========================= */
+const username = localStorage.getItem("user")
+document.getElementById("namaUser").innerText = username
+
+if(!username){
+alert("Silahkan login dulu")
+window.location="login.html"
+}
+
+
+
+/* =================
+   SALDO
+================= */
+let saldoUser = 0
+
+function loadSaldo(){
+
+fetch("saldo/" +username)
+.then(res=>res.json())
+.then(data=>{
+
+saldoUser = data.saldo // 🔥 simpan saldo
+
+document.getElementById("saldo").innerText =
+"Rp " + formatRupiah(data.saldo)
+
+})
+
+}
+
+/* =================
+   RIWAYAT
+================= */
+function loadHistory(){
+
+fetch("history/" +username)
+.then(res=>res.json())
+.then(data=>{
+
+let html=""
+let depositPending = false
+let withdrawPending = false
+
+data.forEach(trx=>{
+
+if(trx.type === "deposit" && trx.status === "pending"){
+depositPending = true
+}
+
+if(trx.type === "withdraw" && trx.status === "pending"){
+withdrawPending = true
+}
+
+html+=`
+<tr>
+<td>${trx.id}</td>
+<td>${trx.type}</td>
+<td>Rp ${formatRupiah(trx.amount)}</td>
+<td>${trx.status}</td>
+<td>${trx.date}</td>
+</tr>
+`
+})
+
+document.getElementById("history").innerHTML = html
+
+// 🔥 DEPOSIT
+if(!depositPending){
+localStorage.removeItem("depositPending")
+document.getElementById("depositForm").classList.remove("hidden")
+document.getElementById("depositLoading").classList.add("hidden")
+}
+
+// 🔥 WITHDRAW
+if(!withdrawPending){
+localStorage.removeItem("withdrawPending")
+document.getElementById("withdrawForm").classList.remove("hidden")
+document.getElementById("withdrawLoading").classList.add("hidden")
+}
+
+})
+}
+
+
+
+/* =================
+   DEPOSIT
+================= */
+function deposit(){
+
+let jumlah = parseInt(document.getElementById("depositAmount").value)
+
+if(!jumlah) return alert("Masukkan jumlah!")
+
+// 🔥 VALIDASI MINIMUM
+if(jumlah < MIN_DEPOSIT){
+return alert("Minimum deposit Rp " + formatRupiah(MIN_DEPOSIT))
+}
+
+// 🔥 VALIDASI METODE PEMBAYARAN
+if(!selectedPay){
+return alert("Pilih metode pembayaran terlebih dahulu!")
+}
+
+const proof = document.getElementById("proof").files[0]
+if(!proof) return alert("Upload bukti transfer!")
+
+// lanjut seperti biasa...
+
+// 🔥 TAMPILKAN LOADING
+document.getElementById("depositForm").classList.add("hidden")
+document.getElementById("depositLoading").classList.remove("hidden")
+
+// 🔥 SIMPAN STATUS (biar refresh ga hilang)
+localStorage.setItem("depositPending", "true")
+
+let form = new FormData()
+form.append("username",username)
+form.append("amount",jumlah)
+form.append("method",selectedPay) // 🔥 TAMBAHAN METHOD
+form.append("proof",proof)
+
+fetch("/deposit",{
+method:"POST",
+body:form
+})
+.then(res=>res.json())
+.then(data=>{
+
+alert("Deposit dikirim, menunggu admin")
+
+loadHistory()
+loadSaldo()
+
+})
+}
+
+
+/* =================
+CHECK STATUS DEPOSIT REALTIME
+================= */
+
+let dpInterval = null
+let lastDepositId = parseInt(localStorage.getItem("lastDPId")) || null
+
+function checkDepositRealtime(){
+
+if(dpInterval) clearInterval(dpInterval)
+
+dpInterval = setInterval(()=>{
+
+fetch(`/checkDepositStatus?username=${username}`)
+.then(res=>res.json())
+.then(data=>{
+
+console.log("DEPOSIT:", data)
+
+// =====================
+// PENDING
+// =====================
+if(data.status === "pending"){
+document.getElementById("depositForm").classList.add("hidden")
+document.getElementById("depositLoading").classList.remove("hidden")
+}
+
+// =====================
+// APPROVED / REJECTED
+// =====================
+if(
+(data.status === "approved" || data.status === "rejected") 
+&& data.id != lastDepositId
+){
+
+lastDepositId = data.id
+localStorage.setItem("lastDPId", data.id)
+
+// balik ke normal
+document.getElementById("depositForm").classList.remove("hidden")
+document.getElementById("depositLoading").classList.add("hidden")
+
+localStorage.removeItem("depositPending")
+
+// notif
+if(data.status === "approved"){
+showNotif("💰 Deposit berhasil di approve", "green")
+}else{
+showNotif("❌ Deposit ditolak", "red")
+}
+
+}
+
+})
+
+},3000)
+
+}
+
+/* =================
+   selectPay
+================= */
+let selectedPay = ""
+
+function selectPay(type){
+selectedPay = type
+
+let box = document.querySelectorAll(".payBox")
+box.forEach(b=>b.style.border="2px solid transparent")
+
+event.currentTarget.style.border="2px solid #00aaff"
+}
+
+function confirmPay(){
+
+let html = ""
+
+if(selectedPay=="qris"){
+html = `
+<h3>QRIS</h3>
+<p>Atas Nama : Michael Store</p>
+<img src="img/qris.png" class="qrisImg">
+`
+}
+
+if(selectedPay=="bca"){
+html = `
+<h3>Transfer BCA</h3>
+<p>No Rekening : BELUM TERSEDIA </p>
+<p>Atas Nama : BELUM TERSEDIA </p>
+`
+}
+
+if(selectedPay=="dana"){
+html = `
+<h3>DANA</h3>
+<p>Nomor : 082175501206</p>
+<p>Atas Nama : ILIX FITXX </p>
+`
+}
+
+document.getElementById("paymentInfo").innerHTML = html
+
+document.getElementById("depositForm").classList.remove("hidden")
+}
+
+
+
+
+
+/* =================
+   WITHDRAW
+================= */
+function withdraw(){
+
+let jumlah = parseInt(document.getElementById("withdrawAmount").value)
+
+if(!jumlah) return alert("Masukkan jumlah!")
+
+// 🔥 VALIDASI MINIMUM
+if(jumlah < MIN_WITHDRAW){
+return alert("Minimum withdraw Rp " + formatRupiah(MIN_WITHDRAW))
+}
+
+// 🔥 VALIDASI SALDO KURANG
+if(jumlah > saldoUser){
+
+let err = document.getElementById("saldoErrorGlobal")
+
+err.classList.remove("hidden")
+
+setTimeout(()=>{
+err.classList.add("hidden")
+},2000)
+
+return
+}
+
+// 🔥 TAMPILKAN LOADING
+document.getElementById("withdrawForm").classList.add("hidden")
+document.getElementById("withdrawLoading").classList.remove("hidden")
+
+// 🔥 SIMPAN STATUS
+localStorage.setItem("withdrawPending", "true")
+
+fetch("/withdraw",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+username:username,
+amount:jumlah
+})
+
+})
+.then(res=>res.json())
+.then(data=>{
+alert("Withdraw dikirim, menunggu admin")
+loadHistory()
+loadSaldo()
+})
+
+}
+
+
+
+// ======================
+// 🔔 NOTIF FUNCTION (TARUH DI ATAS / GLOBAL)
+// ======================
+function showNotif(text){
+let div = document.createElement("div")
+div.innerText = text
+div.style.position = "fixed"
+div.style.top = "20px"
+div.style.right = "20px"
+div.style.background = "green"
+div.style.color = "white"
+div.style.padding = "10px"
+div.style.borderRadius = "5px"
+div.style.zIndex = "9999"
+
+document.body.appendChild(div)
+
+setTimeout(()=> div.remove(),3000)
+}
+
+
+/* =================
+CHECK STATUS WD Realtime
+================= */
+
+let wdInterval = null
+let lastNotifiedId = parseInt(localStorage.getItem("lastWDId")) || null
+let isTyping = false // 🔥 proteksi saat user ngetik
+
+// 🔥 deteksi user lagi ngetik
+const wdInput = document.getElementById("withdrawAmount")
+if(wdInput){
+wdInput.addEventListener("focus", ()=> isTyping = true)
+wdInput.addEventListener("blur", ()=> isTyping = false)
+}
+
+function checkWithdrawRealtime(){
+
+if(wdInterval) clearInterval(wdInterval)
+
+wdInterval = setInterval(()=>{
+
+fetch(`/checkWithdrawStatus?username=${username}`)
+.then(res=>res.json())
+.then(data=>{
+
+console.log("WD:", data)
+
+// =====================
+// PENDING
+// =====================
+if(data.status === "pending"){
+document.getElementById("withdrawForm").classList.add("hidden")
+document.getElementById("withdrawLoading").classList.remove("hidden")
+}
+
+// =====================
+// APPROVED / REJECTED
+// =====================
+if(
+(data.status === "approved" || data.status === "rejected") 
+&& data.id != lastNotifiedId
+){
+
+lastNotifiedId = data.id
+localStorage.setItem("lastWDId", data.id) // 🔥 simpan biar ga muncul lagi setelah refresh
+
+// ❗ jangan ganggu kalau user lagi ngetik
+if(!isTyping){
+document.getElementById("withdrawForm").classList.remove("hidden")
+document.getElementById("withdrawLoading").classList.add("hidden")
+}
+
+localStorage.removeItem("withdrawPending")
+
+// 🔥 notif sesuai status
+if(data.status === "approved"){
+showNotif("✅ Withdraw berhasil di approve", "green")
+}else{
+showNotif("❌ Withdraw ditolak", "red")
+}
+
+}
+
+})
+
+},3000)
+
+}
+
+/* =================
+SISTEM GAME FIX FULL
+================= */
+
+let pilihan = null
+let taruhan = 0
+let room = null
+let roomCode = null  
+let gameMode = null
+let intervalMatch = null
+
+/* =================
+PILIH PRIVAT
+================= */
+function pilihPrivate(p){
+
+pilihanPrivate = p
+
+document.getElementById("pilihanPrivate").innerText = p
+
+let btnKecil = document.getElementById("btnKecilPrivate")
+let btnBesar = document.getElementById("btnBesarPrivate")
+
+// reset warna
+btnKecil.style.background = "#3498db"
+btnBesar.style.background = "#3498db"
+
+// aktifkan pilihan
+if(p === "kecil"){
+btnKecil.style.background = "green"
+}else{
+btnBesar.style.background = "green"
+}
+
+}
+
+
+/* =================
+PILIH RANDOM ONLINE
+================= */
+function pilih(p){
+pilihan = p
+
+document.getElementById("pilihanUser").innerText = p
+document.getElementById("infoUser").innerText = username + " ("+p+")"
+
+if(p === "kecil"){
+btnKecil.style.background="green"
+btnBesar.style.background="gray"
+}else{
+btnBesar.style.background="green"
+btnKecil.style.background="gray"
+}
+}
+/* =================
+CARI LAWAN RANDOM
+================= */
+function cariLawan(){
+
+gameMode = "random"
+
+let bet = parseInt(document.getElementById("betAmount").value)
+
+if(!bet) return alert("Masukkan taruhan!")
+if(!pilihan) return alert("Pilih dulu!")
+
+// 🔥 VALIDASI SALDO
+if(bet > saldoUser){
+document.getElementById("saldoErrorGlobal").style.display="block"
+
+setTimeout(()=>{
+document.getElementById("saldoErrorGlobal").style.display="none"
+},2000)
+
+return
+}
+
+
+taruhan = bet
+
+document.getElementById("infoBet").innerText =
+new Intl.NumberFormat('id-ID').format(taruhan)
+
+document.getElementById("randomPage").classList.add("hidden")
+document.getElementById("cariLawanBox").classList.remove("hidden")
+
+fetch("/cari-lawan",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
+username,
+bet:taruhan,
+pick:pilihan,
+mode:"m1"
+})
+})
+.then(res=>res.json())
+.then(data=>{
+
+if(data.status === "saldo_kurang"){
+alert("Saldo anda kurang")
+return
+}
+
+if(data.status === "matched"){
+
+room = data.room
+
+clearInterval(intervalMatch)
+
+startCountdown({
+me:{
+username: username,
+pick: pilihan,
+bet: taruhan
+},
+lawan:{
+username: data.lawan || "Lawan",
+pick: pilihan === "kecil" ? "besar" : "kecil",
+bet: taruhan
+}
+})
+
+return
+}
+
+cekMatch()
+
+})
+}
+/* =================
+CEK MATCH (FIX)
+================= */
+function cekMatch(){
+
+if(intervalMatch) clearInterval(intervalMatch)
+
+intervalMatch = setInterval(()=>{
+
+// ===== PRIVATE =====
+if(gameMode === "private"){
+
+fetch(`/cek-private?code=${roomCode}&mode=m1`)
+.then(res=>res.json())
+.then(data=>{
+
+if(data.status === "matched"){
+
+clearInterval(intervalMatch)
+
+let players = data.players
+let lawan = players.find(p => p.username !== username)
+
+ room = players[0].room
+
+
+document.getElementById("infoLawan").innerText =
+lawan.username + " (" + lawan.pick + ")"
+
+startCountdown(players)
+
+}
+
+})
+
+}
+
+// ===== RANDOM =====
+else if(gameMode === "random"){
+
+fetch(`/cek-lawan/${username}?mode=m1`)
+.then(res=>res.json())
+.then(data=>{
+
+if(data.status === "matched"){
+
+clearInterval(intervalMatch)
+
+// ✅ FIX PENTING
+room = data.room
+
+startCountdown({
+me: {
+username: username,
+pick: pilihan,
+bet: taruhan
+},
+lawan: {
+username: data.lawan,
+pick: pilihan === "kecil" ? "besar" : "kecil",
+bet: taruhan
+}
+})
+
+}
+
+})
+
+}
+
+},1000)
+
+} // ✅ FIX: PENUTUP FUNCTION
+
+/* =================
+COUNTDOWN MATCH
+================= */
+function startCountdown(players){
+
+   localStorage.setItem("matchFound", "true")
+localStorage.setItem("matchData", JSON.stringify(players))
+localStorage.setItem("matchRoom", room)
+localStorage.setItem("matchMode", gameMode)
+
+document.getElementById("cariLawanBox").innerHTML = `
+<h3>Match ditemukan!</h3>
+<h2 id="countdown">3</h2>
+`
+
+let count = 3
+
+let cd = setInterval(()=>{
+
+count--
+document.getElementById("countdown").innerText = count
+
+if(count <= 0){
+
+clearInterval(cd)
+
+showPage("gamePage")
+buatDadu()
+startGame(players)
+
+}
+
+},1000)
+
+}
+
+
+/* =================
+BUAT DADU 3D
+================= */
+function buatDadu(){
+
+document.getElementById("cariLawanBox").classList.add("hidden")
+
+
+let area = document.getElementById("diceArea")
+area.innerHTML=""
+
+for(let i=0;i<9;i++){
+
+let dice = document.createElement("div")
+dice.className="dice"
+
+dice.innerHTML=`
+<div class="face front"></div>
+<div class="face back"></div>
+<div class="face right"></div>
+<div class="face left"></div>
+<div class="face top"></div>
+<div class="face bottom"></div>
+`
+
+area.appendChild(dice)
+setDiceReal(dice)         
+dice.classList.add("hide-number")
+setDiceReal(dice)
+
+}
+
+}
+
+
+/* =================
+FUNGSI ROTASI DADU
+================= */
+function getRotate(angka){
+
+switch(angka){
+
+case 1: return "rotateX(0deg) rotateY(0deg)"       // front
+case 6: return "rotateY(180deg)"                  // back
+
+case 3: return "rotateY(-90deg)"                  // right
+case 4: return "rotateY(90deg)"                   // left
+
+case 5: return "rotateX(-90deg)"                  // top
+case 2: return "rotateX(90deg)"                   // bottom
+
+}
+
+}
+
+
+/* =================
+UPDATE TOTAL REALTIME
+================= */
+function updateTotal(){
+
+let total = 0
+
+document.querySelectorAll(".dice").forEach(d=>{
+  let val = parseInt(d.dataset.value)
+  if(!isNaN(val)) total += val
+})
+
+document.getElementById("historyDice").innerHTML =
+"<h2>Total: "+total+"</h2>"
+
+}
+
+
+/* =================
+ROLL DADU 3D REALTIME (SYNC SERVER)
+================= */
+function rollDiceOnline(){
+
+fetch("/roll",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+room,
+mode:"m1"
+})
+})
+.then(res=>res.json())
+.then(data=>{
+
+if(data.status !== "roll") return
+
+let hasilServer = data.hasil
+
+let dice = document.querySelectorAll(".dice")
+
+dice.forEach((d,i)=>{
+
+setTimeout(()=>{
+
+   d.classList.remove("hide-number")
+let durasi = i >= 6 ? 2000 : 1000
+
+// animasi random visual
+let animRandom = setInterval(()=>{
+
+let angkaRandom = Math.floor(Math.random()*6)+1
+
+
+updateTotal()
+
+},100)
+
+diceIntervals.push(animRandom)
+
+// rotasi random
+d.style.transition = durasi+"ms"
+d.style.transform =
+"rotateX("+(Math.random()*720)+"deg) rotateY("+(Math.random()*720)+"deg)"
+
+
+setTimeout(()=>{
+
+clearInterval(animRandom)
+
+// angka FINAL dari SERVER
+let angka = hasilServer[i]
+
+d.dataset.value = angka
+d.style.transform = getRotate(angka)
+
+updateTotal()
+
+},durasi)
+
+
+// dadu terakhir
+if(i == 8){
+
+setTimeout(()=>{
+
+cekHasilRealtime()
+
+},8000)
+
+}
+
+}, i * 1000)
+
+})
+
+})
+
+}
+
+/* =================
+SET ANGKA KE SEMUA SISI
+================= */
+function setDiceReal(dice){
+
+  dice.querySelector(".front").innerText = 1
+  dice.querySelector(".back").innerText = 6
+
+  dice.querySelector(".right").innerText = 3
+  dice.querySelector(".left").innerText = 4
+
+  dice.querySelector(".top").innerText = 5
+  dice.querySelector(".bottom").innerText = 2
+
+}
+
+/* =================
+CEK HASIL REALTIME
+================= */
+function cekHasilRealtime(){
+
+let getHasil = setInterval(()=>{
+
+fetch("/hasil",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+room,
+mode:"m1"
+})
+})
+.then(res=>res.json())
+.then(data=>{
+
+if(data.status === "done"){
+
+clearInterval(getHasil)
+
+// STOP SEMUA ANIMASI
+diceIntervals.forEach(x=>clearInterval(x))
+diceIntervals = []
+
+let dice = document.querySelectorAll(".dice")
+
+data.hasil.forEach((angka,i)=>{
+
+dice[i].dataset.value = angka
+dice[i].style.transform = getRotate(angka)
+
+})
+
+
+document.getElementById("historyDice").innerHTML =
+"<h2>Total: "+data.total+"</h2>"
+
+let isWin = data.winner === username
+
+document.getElementById("resultPopup").classList.remove("hidden")
+localStorage.removeItem("gameAktif")
+localStorage.removeItem("gameRoom")
+localStorage.removeItem("gameMode")
+document.getElementById("resultText").innerText =
+isWin ? "🎉 MENANG" : "💀 KALAH"
+
+loadSaldo()
+
+}
+
+})
+
+},500)
+
+}
+
+
+/* =================
+START GAME (FIX UNIVERSAL)
+================= */
+function startGame(data){
+
+localStorage.removeItem("matchFound")
+localStorage.removeItem("matchData")
+localStorage.removeItem("matchRoom")
+localStorage.removeItem("matchMode")
+
+let me, lawan
+
+if(Array.isArray(data)){
+me = data.find(p => p.username === username)
+lawan = data.find(p => p.username !== username)
+}else{
+me = data.me
+lawan = data.lawan
+}
+
+document.getElementById("infoGame").innerHTML = `
+Anda: ${me.username} (${me.pick})<br>
+Lawan: ${lawan.username} (${lawan.pick})<br>
+Taruhan: Rp ${me.bet}
+`
+
+window.dataGame = { me, lawan }
+localStorage.setItem("gameData", JSON.stringify({ me, lawan }))
+localStorage.setItem("currentRound", currentRound)
+
+localStorage.setItem("gameAktif", "true")
+localStorage.setItem("gameRoom", room)
+localStorage.setItem("gameMode", gameMode)
+localStorage.setItem("gameTaruhan", taruhan)
+
+// countdown dadu
+let time = 5
+
+let timer = setInterval(()=>{
+
+document.getElementById("historyDice").innerHTML =
+"<h2>Mulai dalam: "+time+"</h2>"
+
+time--
+
+if(time < 0){
+clearInterval(timer)
+rollDiceOnline()
+}
+
+},1000)
+
+}
+
+
+
+
+
+/* =================
+PRIVATE ROOM
+================= */
+function buatRoom(){
+
+
+gameMode = "private"
+
+let bet = parseInt(document.getElementById("betPrivate").value)
+
+if(!bet) return alert("Masukkan taruhan!")
+if(!pilihanPrivate) return alert("Pilih dulu!")
+
+if(bet > saldoUser){
+let err = document.getElementById("saldoErrorGlobal")
+
+err.classList.remove("hidden")
+
+setTimeout(()=>{
+err.classList.add("hidden")
+},2000)
+
+return
+}
+
+// 🔽 TAMBAHKAN INI
+document.getElementById("privatePage").classList.add("hidden")
+
+taruhan = bet
+console.log("ROOM:", room)
+fetch("/create-room",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+username,
+bet:taruhan,
+pick:pilihanPrivate,
+mode:"m1"
+})
+})
+.then(res=>res.json())
+.then(data=>{
+
+if(data.status === "ok"){
+
+roomCode = data.code
+ room = data.room || data.code  // 🔥 penting
+document.getElementById("cariLawanBox").classList.remove("hidden")
+
+document.getElementById("cariLawanBox").innerHTML = `
+<h3>Room dibuat!</h3>
+<h2>Kode Room : ${data.code}</h2>
+<p>Menunggu lawan...</p>
+<button type="button" onclick="cancelCari()">Cancel</button>
+<div class="loader"></div>
+`
+
+cekMatch()
+
+}
+
+})
+
+}
+
+
+/* =================
+JOIN ROOM (PAKAI KONFIRMASI)
+================= */
+let tempJoinData = null
+
+function joinRoom(){
+
+let code = document.getElementById("kodeRoom").value
+if(!code) return alert("Masukkan kode!")
+
+// 🔥 HANYA CEK DATA (BELUM JOIN)
+fetch(`/cek-room?code=${code}&mode=m1`)
+.then(res=>res.json())
+.then(data=>{
+
+if(data.status !== "ok"){
+return alert("Room tidak ditemukan!")
+}
+
+// simpan data sementara
+tempJoinData = data
+
+// tampilkan ke popup
+document.getElementById("cj_nama").innerText = data.host
+document.getElementById("cj_pick").innerText = data.pick
+document.getElementById("cj_bet").innerText = data.bet
+
+// tampilkan popup
+document.getElementById("confirmJoinPopup").classList.remove("hidden")
+
+})
+
+}
+
+
+function lanjutJoin(){
+
+if(!tempJoinData) return
+
+gameMode = "private" // 🔥 pindah ke sini
+
+let code = tempJoinData.code
+
+// tutup popup
+document.getElementById("confirmJoinPopup").classList.add("hidden")
+
+// 🔥 BARU CONNECT KE SERVER
+fetch("/join-room",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+username,
+code,
+mode:"m1"
+})
+})
+.then(res=>res.json())
+.then(data=>{
+
+if(data.status === "saldo_kurang"){
+
+let err = document.getElementById("saldoErrorGlobal")
+
+err.classList.remove("hidden")
+
+setTimeout(()=>{
+err.classList.add("hidden")
+},2000)
+
+return
+}
+
+if(data.status === "matched"){
+
+room = data.room
+roomCode = code
+
+document.getElementById("privatePage").classList.add("hidden")
+document.getElementById("cariLawanBox").classList.remove("hidden")
+
+document.getElementById("cariLawanBox").innerHTML = `
+<h3>Menunggu Host...</h3>
+<div class="loader"></div>
+`
+
+cekMatch()
+
+}else{
+alert("Room tidak ditemukan!")
+}
+
+})
+
+}
+
+function batalJoin(){
+document.getElementById("confirmJoinPopup").classList.add("hidden")
+tempJoinData = null
+}
+
+
+/* =================
+   main lagi
+================= */
+function mainLagi(){
+
+nextPageAfterReload = "m1Page"
+
+localStorage.setItem("goPage", nextPageAfterReload)
+
+location.reload()
+
+}
+
+/* =================
+   EXIT
+================= */
+
+function exitGame(){
+
+nextPageAfterReload = "homePage"
+
+// simpan ke localStorage biar kebaca setelah reload
+localStorage.setItem("goPage", nextPageAfterReload)
+
+// refresh
+location.reload()
+
+}
+
+/* =================
+   cancel 
+================= */
+async function cancelCari(){
+
+console.log("Tombol cancel diklik")
+
+// 🔥 stop interval
+if(intervalMatch){
+clearInterval(intervalMatch)
+intervalMatch = null
+}
+
+try{
+
+console.log("Username:", username)
+console.log("RoomCode:", roomCode)
+
+// 🔥 kirim ke server
+let res = await fetch("/cancel-room",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body: JSON.stringify({
+username: username
+})
+})
+
+let data = await res.json()
+
+console.log("Response cancel:", data)
+
+// 🔽 UI
+document.getElementById("cariLawanBox").classList.add("hidden")
+showPage("m1Page")
+
+}catch(err){
+console.error("Cancel Error:", err)
+}
+
+}
+/* =================
+   onload
+================= */
+
+window.onload = function(){
+
+const gameAktif = localStorage.getItem("gameAktif")
+
+if(gameAktif === "true"){
+
+room = localStorage.getItem("gameRoom")
+gameMode = localStorage.getItem("gameMode")
+taruhan = parseInt(localStorage.getItem("gameTaruhan")) || 0
+currentRound = parseInt(localStorage.getItem("currentRound")) || 1
+
+let savedData = JSON.parse(localStorage.getItem("gameData") || "null")
+
+showPage("gamePage")
+buatDadu()
+
+if(savedData){
+document.getElementById("infoGame").innerHTML = `
+Anda: ${savedData.me.username} (${savedData.me.pick})<br>
+Lawan: ${savedData.lawan.username} (${savedData.lawan.pick})<br>
+Taruhan: Rp ${savedData.me.bet}
+`
+}
+
+document.getElementById("historyDice").innerHTML =
+"<h2>Melanjutkan game...</h2>"
+
+rollDiceOnline()
+
+return
+}
+
+
+
+const matchFound = localStorage.getItem("matchFound")
+
+if(matchFound === "true"){
+
+room = localStorage.getItem("matchRoom")
+gameMode = localStorage.getItem("matchMode")
+
+let players = JSON.parse(localStorage.getItem("matchData") || "null")
+
+if(players){
+document.getElementById("cariLawanBox").classList.remove("hidden")
+startCountdown(players)
+return
+}
+
+}
+
+
+// ======================
+// 🔥 PRIORITAS 2: PINDAH HALAMAN PAKAI REFRESH
+// ======================
+const goPage = localStorage.getItem("goPage")
+
+if(goPage){
+showPage(goPage)
+localStorage.removeItem("goPage")
+return
+}
+
+// ======================
+// DEFAULT
+// ======================
+showPage("homePage")
+
+}
+
+function goRefresh(page){
+localStorage.setItem("goPage", page)
+location.reload()
+}
+/* =================
+   LOAD DATA
+================= */
+loadSaldo()
+loadHistory()
+
+</script>
+
+</body>
+</html>
